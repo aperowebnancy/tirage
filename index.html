@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tirage au sort</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body ng-app="randomizer">
+
+    <div id="sidebar">
+        <ul class="list-unstyled">
+            <li><img src="assets/img/aperoweb.png" class-"img-responsive" alt="AperoWeb"/></li>
+            <li class="text-center">
+                <h4>Sponsorisé par</h4>
+            </li>
+            <li><img src="assets/img/sparkfun.png" class-"img-responsive" alt="Sparkfun"/></li>
+            <li><img src="assets/img/makeymakey.png" class-"img-responsive" alt="Makey Makey"/></li>
+        </ul>
+    </div>
+
+    <div id="main" ng-controller="MainController">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-1">
+                    <button type="button" ng-click="pickWinner()" class="btn btn-lg btn-warning">Lancer le tirage</button>
+                </div>
+                <form ng-submit="pushName(name)" class="form-inline add-name pull-right" role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Nom du participant" ng-model="name" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter un participant</button>
+                    <button type="button" ng-click="clearNames()" class="btn btn-danger">Tout supprimer</button>
+                </form>
+            </div>
+        </div>
+        <div id="inner">
+            <p class="text-center lead" ng-if="winner">
+                Le gagnant est <br/> <span class="text-primary">{{ winner }}</span>
+            </p>
+            <div class="row">
+                <h2>Liste des participants</h2>
+                <table class="table table-bordered table-stripped">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th style="width: 10%;" class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tr ng-repeat="name in names track by $index">
+                        <td class="lead">{{ name }}</td>
+                        <td class="text-center"><button ng-click="removeName(name)" class="btn btn-danger btn-sm">Supprimer</button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script>
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        var Application = angular.module('randomizer', []);
+
+        Application.controller('MainController', ['$scope', function($scope) {
+            $scope.names = [];
+
+            $scope.pushName = function(name) {
+                $scope.names.push(name);
+                $scope.name = null;
+            };
+
+            $scope.pickWinner = function() {
+                $scope.winner = $scope.names[getRandomInt(0, $scope.names.length - 1)];
+                $scope.removeName($scope.winner);
+            };
+
+            $scope.clearNames = function() {
+                $scope.names = [];
+            };
+
+            $scope.removeName = function(name) {
+                $scope.names.splice($scope.names.indexOf(name), 1);
+            };
+        }]);
+    </script>
+  </body>
+</html>
